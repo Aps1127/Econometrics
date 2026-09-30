@@ -1,0 +1,86 @@
+# OLS PRACTICE QUIZ
+# Convention (Wooldridge): SST = SSE + SSR
+#   SSE = explained sum of squares, SSR = residual sum of squares
+#   R^2 = SSE/SST = 1 - SSR/SST
+
+# ==============================================================================
+# MULTIPLE CHOICE
+# ==============================================================================
+
+# In OLS, the fitted value Y_hat_i = beta0_hat + beta1_hat * X_i is:
+# The model's PREDICTION of Y at X_i
+
+# The OLS residual U_hat_i equals:
+# Y_i - Y_hat_i (actual minus fitted)
+
+# A POSITIVE residual (U_hat_i > 0) means OLS:
+# Under-predicted Y_i (actual > fitted)
+
+# R^2 is:
+# The fraction of the sample variation in Y explained by X
+
+# The total sum of squares decomposes as SST =
+# SSE + SSR
+
+# The sum of the OLS residuals (sum of U_hat_i) is always:
+# 0
+
+# An R^2 close to 0 means:
+# The OLS line explains little of the variation in Y --- common, and not necessarily a bad model
+
+# The point (X_bar, Y_bar):
+# Always lies on the OLS regression line
+
+# ==============================================================================
+# NUMERIC
+# ==============================================================================
+
+# For the sample x = (8, 4, 4), y = (3, 8, 12), find the OLS slope
+# beta1_hat = sum((X_i - X_bar)(Y_i - Y_bar)) / sum((X_i - X_bar)^2).
+x <- c(8, 4, 4); y <- c(3, 8, 12)
+sum((x - mean(x)) * (y - mean(y))) / sum((x - mean(x))^2)
+
+# For that same sample x = (6, 1, 4), y = (9, 2, 11), find the OLS intercept
+# beta0_hat = Y_bar - beta1_hat * X_bar.
+# (Note: says "same sample" but the numbers differ from the slope question; using the printed numbers.)
+x <- c(6, 1, 4); y <- c(9, 2, 11)
+b1 <- sum((x - mean(x)) * (y - mean(y))) / sum((x - mean(x))^2)
+mean(y) - b1 * mean(x)
+
+# For the sample x = (4, 1, 4), y = (5, 7, 1), fit the OLS line
+# y_hat = beta0_hat + beta1_hat * x and predict y_hat at x = 7.
+x <- c(4, 1, 4); y <- c(5, 7, 1)
+b1 <- sum((x - mean(x)) * (y - mean(y))) / sum((x - mean(x))^2)
+b0 <- mean(y) - b1 * mean(x)
+b0 + b1 * 7
+
+# A fitted line is y_hat = -2 + (3/10) x. Find the fitted value y_hat at x = 8.
+-2 + (3/10) * 8
+
+# A fitted line is y_hat = -3 + (7/10) x. A person has x = 16 and actual y = 8.
+# Find the residual u_hat = y - y_hat.
+8 - (-3 + (7/10) * 16)
+
+# A fitted slope is beta1_hat = 2/10. Using delta_y_hat = beta1_hat * delta_x,
+# find the predicted change in y when x rises by 5.
+(2/10) * 5
+
+# For the fitted line y_hat = 3 + (8/10) x and the three points
+# (4, 9), (8, 2), (3, 11), find SSR = sum((Y_i - Y_hat_i)^2).
+px <- c(4, 8, 3); py <- c(9, 2, 11)
+sum((py - (3 + (8/10) * px))^2)
+
+# A regression has SST = 253 and SSR = 134. Find the explained sum of squares SSE.
+253 - 134
+
+# A regression has SST = 333 and SSR = 51. Find R^2.
+1 - 51/333
+
+# A regression has SSE = 95 and SST = 310. Find R^2.
+95/310
+
+# A regression has SST = 239 and SSR = 111. What fraction of the variation in Y is UNEXPLAINED?
+111/239
+
+# A regression has SST = 354 and R^2 = 11/100. Find SSR.
+354 * (1 - 11/100)
