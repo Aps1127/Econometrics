@@ -1,0 +1,113 @@
+## PROBLEM SET 8 - ON WEDNESDAY'S QUIZ
+
+
+# In test score = B0 + B1 class size + U, family income is part of U. Richer school districts tend to have smaller classes. Which statement is correct?
+#   - B1 must equal zero.
+#   - The zero conditional mean assumption E[U | class size] = 0 holds, because family income is not in the model.
+#   - The zero conditional mean assumption fails, because the average of U changes with class size.
+#   - U is always equal to zero.
+# ANSWER: The zero conditional mean assumption fails, because the average of U changes with class size.
+
+
+# The OLS estimates B0hat, B1hat are called least squares estimates. A researcher fits four candidate lines to the same sample and records three sums for each. Exactly one is the OLS line. Which one?
+#   Line | sum uhat_i | sum |uhat_i| | sum uhat_i^2
+#    A   |    0.00    |    7.30      |    9.71
+#    B   |   -1.00    |    5.80      |    9.00
+#    C   |    0.00    |    6.40      |    8.13
+#    D   |    0.50    |    6.70      |    8.35
+# ANSWER: Line C
+
+
+# E[X] = 5 and E[X^2] = 61. Find the standard deviation of 3X - 7. (round to the hundredths)
+# ANSWER: 18.00
+
+
+# Var(X) = 10, Var(Y) = 12, and Cov(X,Y) = -5.3. Find Var(3X - 3Y). (round to the hundredths)
+# ANSWER: 293.40
+
+
+# X and Y have the joint distribution below. Find Cor(X,Y). (round to the hundredths)
+#   x y P(X = x, Y = y)
+#   1 5   0.2
+#   3 2   0.3
+#   4 2   0.4
+#   5 9   0.1
+# ANSWER: -0.02
+
+
+# For the sample x = (2,3,5,7,10), y = (2,5,12,7,5), regress y on x by OLS. Find the residual of the third observation, (x3, y3) = (5, 12). (round to the hundredths)
+# ANSWER: 5.90
+
+
+# An OLS regression on six observations has residuals 1.7, -1.9, 0.7, 2.2, 1.8, and one more. What is the sixth residual? (round to the hundredths)
+# ANSWER: -4.50
+
+
+# For the sample x = (2,3,5,8,9,14), y = (7,5,13,2,9,11), regress y on x by OLS. Compute sum(i=1 to 6) x_i uhat_i. (round to the hundredths)
+# ANSWER: 0
+
+
+# A regression has explained sum of squares SSE = 93 and R^2 = 0.16. Find the sum of squared residuals SSR. (round to the hundredths)
+# ANSWER: 488.25
+
+
+# A sample of n = 11 observations has sample variance Sy^2 = 6. Find the total sum of squares SST. (round to the hundredths)
+# ANSWER: 60.00
+
+
+# Data: wage1 (wage = average hourly earnings in dollars; tenure = years with the current employer). Run reg <- lm(wage ~ tenure, data = wage1). What is the OLS residual of the worker in row 12? (round to the hundredths)
+# ANSWER: 3.14
+
+
+# An OLS regression line has intercept B0hat = 5 and slope B1hat = 2.1. The sample mean of x is 11. What is the sample mean of y? (round to the hundredths)
+# ANSWER: 28.10
+
+
+
+##########################################################################
+## NOT ON WEDNESDAY'S QUIZ (units of measurement and logs)
+##########################################################################
+
+
+# In a regression of y on x, the OLS slope is B1hat = 1.66. Every value of y is then multiplied by 100 (for example, dollars to cents when the multiplier is 100). What is the new OLS slope? (round to the hundredths)
+# ANSWER: 166.00
+
+
+# In a regression of y on x, the OLS slope is B1hat = 0.03. Every value of x is then divided by 100 (for example, percent to decimal when the divisor is 100). What is the new OLS slope? (round to the hundredths)
+# ANSWER: 3.00
+
+
+# In a regression of y on x, every value of x is multiplied by 10. Which statement is correct?
+#   - The slope is divided by 10, the intercept does not change, and R^2 does not change.
+#   - The slope is multiplied by 10, and the intercept does not change.
+#   - R^2 is divided by 10.
+#   - The slope and the intercept are both divided by 10.
+# ANSWER: The slope is divided by 10, the intercept does not change, and R^2 does not change.
+
+
+# Data: ceosal1 (salary = a CEO's salary in thousands of dollars; sales = firm sales in millions of dollars). Run lm(salary ~ sales, data = ceosal1). If salary is measured in dollars instead of thousands of dollars, what is the OLS slope? (Use the unrounded slope.) (round to the hundredths)
+# ANSWER: 15.47
+
+
+# A log-level regression gives log(y)hat = 0.6 + 0.07x. By about what percent does y change when x rises by 3? (Give a percent, e.g. 12.34 for 12.34%.) (round to the hundredths)
+# ANSWER: 21.00
+
+
+# A log-log regression gives log(y)hat = 2.5 + 1.31 log(x). By about what percent does y change when x rises by 5%? (Give a percent.) (round to the hundredths)
+# ANSWER: 6.55
+
+
+# A level-log regression gives yhat = 14 + 6.1 log(x). By about how many units does y change when x rises by 12%? (round to the hundredths)
+# ANSWER: 0.73
+
+
+# A study estimates log(rent)hat = 2.1 + 0.45 log(income). What does the 0.45 mean?
+#   - A $1 rise in income is associated with about a 45% rise in rent.
+#   - A 1% rise in income is associated with about a 45% rise in rent.
+#   - A 1% rise in income is associated with about a 0.45% rise in rent.
+#   - A $1 rise in income is associated with a $0.45 rise in rent.
+# ANSWER: A 1% rise in income is associated with about a 0.45% rise in rent.
+
+
+# Data: wage1 (wage = average hourly earnings in dollars; exper = years of potential work experience). Run the log-level regression lm(log(wage) ~ exper, data = wage1). By about what percent does predicted wage change with 10 more years of experience? (Give a percent, e.g. 12.34 for 12.34%. Use the unrounded slope.) (round to the hundredths)
+# ANSWER: 4.36
