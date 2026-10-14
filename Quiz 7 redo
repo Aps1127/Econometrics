@@ -1,0 +1,145 @@
+##########################################################################
+##  PROBLEM SET 8 - ON WEDNESDAY'S QUIZ
+##  change the numbers on the # INPUT lines, highlight the block, Ctrl+Enter
+##########################################################################
+
+
+# In test score = B0 + B1 class size + U, family income is part of U. Richer school districts tend to have smaller classes. Which statement is correct?
+#   ANSWER: The zero conditional mean assumption fails, because the average of U changes with class size.
+
+
+# The OLS estimates B0hat, B1hat are called least squares estimates. A researcher fits four candidate lines to the same sample and records three sums for each. Exactly one is the OLS line. Which one?
+#   Line | sum uhat_i | sum |uhat_i| | sum uhat_i^2
+#    A   |    0.00    |    7.30      |    9.71
+#    B   |   -1.00    |    5.80      |    9.00
+#    C   |    0.00    |    6.40      |    8.13
+#    D   |    0.50    |    6.70      |    8.35
+#   ANSWER: Line C   (residuals sum to 0 AND smallest sum uhat_i^2)
+
+
+# E[X] = 5 and E[X^2] = 61. Find the standard deviation of 3X - 7. (round to the hundredths)
+EX  <- 5                              # INPUT E[X]
+EX2 <- 61                             # INPUT E[X^2]
+a   <- 3                              # INPUT number in front of X (the -7 does not matter)
+VarX <- EX2 - EX^2
+abs(a) * sqrt(VarX)                   # check: 18
+
+
+# Var(X) = 10, Var(Y) = 12, and Cov(X,Y) = -5.3. Find Var(3X - 3Y). (round to the hundredths)
+VarX <- 10; VarY <- 12; CovXY <- -5.3 # INPUT
+a <- 3; b <- -3                       # INPUT (keep the minus sign on b)
+a^2*VarX + b^2*VarY + 2*a*b*CovXY     # check: 293.4
+
+
+# X and Y have the joint distribution below. Find Cor(X,Y). (round to the hundredths)
+#   x y P(X = x, Y = y)
+#   1 5   0.2
+#   3 2   0.3
+#   4 2   0.4
+#   5 9   0.1
+X <- c(1, 3, 4, 5)                    # INPUT x column
+Y <- c(5, 2, 2, 9)                    # INPUT y column
+p <- c(0.2, 0.3, 0.4, 0.1)            # INPUT probability column
+EX <- sum(X*p); EY <- sum(Y*p)
+CovXY <- sum(X*Y*p) - EX*EY
+VarX  <- sum(X^2*p) - EX^2
+VarY  <- sum(Y^2*p) - EY^2
+CovXY / sqrt(VarX * VarY)             # check: -0.02
+#   Cov(X,Y) if asked: CovXY
+
+
+# For the sample x = (2,3,5,7,10), y = (2,5,12,7,5), regress y on x by OLS. Find the residual of the third observation, (x3, y3) = (5, 12). (round to the hundredths)
+x <- c(2, 3, 5, 7, 10)                # INPUT
+y <- c(2, 5, 12, 7, 5)                # INPUT
+reg <- lm(y ~ x)
+reg$residuals[3]                      # INPUT observation number   check: 5.90
+
+
+# An OLS regression on six observations has residuals 1.7, -1.9, 0.7, 2.2, 1.8, and one more. What is the sixth residual? (round to the hundredths)
+u <- c(1.7, -1.9, 0.7, 2.2, 1.8)      # INPUT
+-sum(u)                               # check: -4.5
+
+
+# For the sample x = (2,3,5,8,9,14), y = (7,5,13,2,9,11), regress y on x by OLS. Compute sum(i=1 to 6) x_i uhat_i. (round to the hundredths)
+#   ANSWER: 0   (always 0 in OLS)
+x <- c(2, 3, 5, 8, 9, 14)             # INPUT
+y <- c(7, 5, 13, 2, 9, 11)            # INPUT
+reg <- lm(y ~ x)
+sum(x * reg$residuals)                # check: ~0 (e-16 means 0)
+
+
+# A regression has explained sum of squares SSE = 93 and R^2 = 0.16. Find the sum of squared residuals SSR. (round to the hundredths)
+SSE <- 93                             # INPUT
+R2  <- 0.16                           # INPUT
+SST <- SSE / R2
+SSR <- SST - SSE
+SSR                                   # check: 488.25
+
+
+# A sample of n = 11 observations has sample variance Sy^2 = 6. Find the total sum of squares SST. (round to the hundredths)
+n  <- 11                              # INPUT
+S2 <- 6                               # INPUT
+S2 * (n - 1)                          # check: 60
+
+
+# Data: wage1 (wage = average hourly earnings in dollars; tenure = years with the current employer). Run reg <- lm(wage ~ tenure, data = wage1). What is the OLS residual of the worker in row 12? (round to the hundredths)
+library(wooldridge)
+reg <- lm(wage ~ tenure, data = wage1)
+reg$residuals[12]                     # INPUT row number   check: 3.14
+
+
+# An OLS regression line has intercept B0hat = 5 and slope B1hat = 2.1. The sample mean of x is 11. What is the sample mean of y? (round to the hundredths)
+B0hat <- 5; B1hat <- 2.1; xbar <- 11  # INPUT
+B0hat + B1hat * xbar                  # check: 28.1
+
+
+
+##########################################################################
+##  NOT ON WEDNESDAY'S QUIZ (units of measurement and logs)
+##########################################################################
+
+
+# In a regression of y on x, the OLS slope is B1hat = 1.66. Every value of y is then multiplied by 100 (for example, dollars to cents when the multiplier is 100). What is the new OLS slope? (round to the hundredths)
+B1hat <- 1.66; c <- 100               # INPUT
+B1hat * c                             # check: 166
+
+
+# In a regression of y on x, the OLS slope is B1hat = 0.03. Every value of x is then divided by 100 (for example, percent to decimal when the divisor is 100). What is the new OLS slope? (round to the hundredths)
+B1hat <- 0.03; k <- 100               # INPUT (k = what x is divided by)
+B1hat * k                             # check: 3
+
+
+# In a regression of y on x, every value of x is multiplied by 10. Which statement is correct?
+#   ANSWER: The slope is divided by 10, the intercept does not change, and R^2 does not change.
+
+
+# Data: ceosal1 (salary = a CEO's salary in thousands of dollars; sales = firm sales in millions of dollars). Run lm(salary ~ sales, data = ceosal1). If salary is measured in dollars instead of thousands of dollars, what is the OLS slope? (Use the unrounded slope.) (round to the hundredths)
+library(wooldridge)
+reg <- lm(salary ~ sales, data = ceosal1)
+reg$coefficients[2] * 1000            # check: 15.47
+
+
+# A log-level regression gives log(y)hat = 0.6 + 0.07x. By about what percent does y change when x rises by 3? (Give a percent, e.g. 12.34 for 12.34%.) (round to the hundredths)
+B1hat <- 0.07; dx <- 3                # INPUT
+100 * B1hat * dx                      # check: 21
+
+
+# A log-log regression gives log(y)hat = 2.5 + 1.31 log(x). By about what percent does y change when x rises by 5%? (Give a percent.) (round to the hundredths)
+B1hat <- 1.31; pct_dx <- 5            # INPUT
+B1hat * pct_dx                        # check: 6.55
+
+
+# A level-log regression gives yhat = 14 + 6.1 log(x). By about how many units does y change when x rises by 12%? (round to the hundredths)
+B1hat <- 6.1; pct_dx <- 12            # INPUT
+(B1hat / 100) * pct_dx                # check: 0.73
+
+
+# A study estimates log(rent)hat = 2.1 + 0.45 log(income). What does the 0.45 mean?
+#   ANSWER: A 1% rise in income is associated with about a 0.45% rise in rent.
+
+
+# Data: wage1 (wage = average hourly earnings in dollars; exper = years of potential work experience). Run the log-level regression lm(log(wage) ~ exper, data = wage1). By about what percent does predicted wage change with 10 more years of experience? (Give a percent, e.g. 12.34 for 12.34%. Use the unrounded slope.) (round to the hundredths)
+library(wooldridge)
+reg <- lm(log(wage) ~ exper, data = wage1)
+d_exper <- 10                         # INPUT
+100 * reg$coefficients[2] * d_exper   # check: 4.36
