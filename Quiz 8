@@ -1,0 +1,64 @@
+##########################################################################
+##  PROBLEM SETS 8 + 9 - CHEAT SHEET
+##  change the numbers on the # INPUT lines, highlight the block, Ctrl+Enter
+##########################################################################
+
+
+# In a regression of y on x, the OLS slope is B1hat = 0.03. Every value of x is then divided by 100 (for example, percent to decimal when the divisor is 100). What is the new OLS slope? (round to the hundredths)
+B1hat <- 0.03; k <- 100               # INPUT (k = what x is divided by)
+B1hat * k                             # check: 3
+#   if x is MULTIPLIED by k instead:  B1hat / k
+
+
+# A log-level regression gives log(y)hat = 0.6 + 0.07x. By about what percent does y change when x rises by 3? (Give a percent, e.g. 12.34 for 12.34%.) (round to the hundredths)
+B1hat <- 0.07; dx <- 3                # INPUT
+100 * B1hat * dx                      # check: 21
+
+
+# A level-log regression gives yhat = 14 + 6.1 log(x). By about how many units does y change when x rises by 12%? (round to the hundredths)
+B1hat <- 6.1; pct_dx <- 12            # INPUT
+(B1hat / 100) * pct_dx                # check: 0.73
+
+
+# A log-log regression of CEO salary on firm sales gives log(salary)hat = B0hat + B1hat log(sales), with salary in thousands of dollars. Salary is then measured in dollars instead. What happens?
+#   ANSWER: B1hat does not change; only B0hat changes.
+
+
+# A log-log regression gives log(y)hat = 4.9 + 0.97 log(x). By about what percent does y change when x falls by 19%? (Give a percent; it can be negative.) (round to the hundredths)
+B1hat <- 0.97; pct_dx <- -19          # INPUT (fall = negative, rise = positive)
+B1hat * pct_dx                        # check: -18.43
+
+
+# Data: ceosal1 (salary = a CEO's 1990 salary in thousands of dollars; roe = the firm's return on equity, in percent; sales = firm sales in millions of dollars). Run the log-level regression lm(log(salary) ~ roe, data = ceosal1). By about what percent does predicted salary change when return on equity rises by 5 points? (Give a percent. Use the unrounded slope.) (round to the hundredths)
+library(wooldridge)
+reg <- lm(log(salary) ~ roe, data = ceosal1)
+d_roe <- 5                            # INPUT
+100 * reg$coefficients[2] * d_roe     # check: 6.93
+
+
+# In wage = B0 + B1 educ + U, which of the following is the most likely to contribute omitted-variable bias to the OLS slope on educ?
+#   ANSWER: The worker's ability, which raises wages and tends to be higher for people with more education.
+
+
+# Holding everything else fixed, which change makes Var(B1hat) smaller?
+#   ANSWER: More spread-out values of X (a larger SST_X).
+
+
+# Under SLR1-SLR5, the error standard deviation is sigma = 6. A sample has the five X values x = (3,4,7,8,9). Find sd(B1hat). (round to the hundredths)
+sigma <- 6                            # INPUT
+x <- c(3, 4, 7, 8, 9)                 # INPUT
+SSTx <- sum((x - mean(x))^2)
+sigma / sqrt(SSTx)                    # check: 1.16
+#   if given sigma^2 instead: sqrt(sigma2) / sqrt(SSTx)   |   Var(B1hat) if asked: sigma^2 / SSTx
+
+
+# A simple regression on n = 24 observations has SSR = 159. Find the estimate of the error variance, sigmahat^2. (round to the hundredths)
+n <- 24; SSR <- 159                   # INPUT
+SSR / (n - 2)                         # check: 7.23
+#   sigmahat (standard error of the regression) if asked: sqrt(SSR / (n - 2))
+
+
+# A simple regression on n = 11 observations has SSR = 492, and SST_X = 5. Find the standard error se(B1hat). (round to the hundredths)
+n <- 11; SSR <- 492; SSTx <- 5        # INPUT
+sigmahat <- sqrt(SSR / (n - 2))
+sigmahat / sqrt(SSTx)                 # check: 3.31
