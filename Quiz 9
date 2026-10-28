@@ -1,0 +1,94 @@
+# Quiz 9 cheat sheet (Problem Set 10)
+# Round every numeric answer to the hundredths place.
+
+# install.packages("wooldridge")   # run once if needed
+library(wooldridge)
+
+# ------------------------------------------------------------------
+# A regression gives test score-hat = 12 + 8 log(income). What does the 8 mean?
+# ANSWER: A 1% rise in income is associated with a rise of about 0.08 points in the predicted test score.
+
+# ------------------------------------------------------------------
+# A log-level regression gives log(y)-hat = 2.3 + 0.01 x. By about what percent does y change when x falls by 3? (Give a percent; it can be negative.) (round to the hundredths)
+# Hint: log-level: %change y = 100 * beta1 * change in x, and a fall means change in x is negative.
+beta1   <- 0.01     # edit
+delta_x <- -3       # edit (negative because x falls)
+round(100 * beta1 * delta_x, 2)    # -3.00
+
+# ------------------------------------------------------------------
+# Data: bwght (bwght = a baby's birth weight in ounces; faminc = the family's income in thousands of dollars). Run the log-log regression lm(log(bwght) ~ log(faminc), data = bwght). By about what percent does predicted birth weight change when family income rises by 20%? (Give a percent.) (round to the hundredths)
+# Hint: log-log: %change y = beta1 * %change x. The slope is an elasticity.
+data("bwght")
+reg_bw <- lm(log(bwght) ~ log(faminc), data = bwght)
+pct_x  <- 20        # edit (% change in family income)
+round(coef(reg_bw)[2] * pct_x, 2)  # 0.41
+
+# ------------------------------------------------------------------
+# Suppose you could draw 1,000 different random samples from the same population and compute beta1-hat in each one. If OLS is unbiased (SLR1-SLR4 hold), which statement is correct?
+# ANSWER: The average of the 1,000 estimates is close to beta1.
+
+# ------------------------------------------------------------------
+# Under SLR1-SLR5, Var(beta1-hat) = sigma^2 / SST_x. Holding everything else fixed, which changes would make Var(beta1-hat) larger? Select all that apply.
+# ANSWER (if it says LARGER):
+# - A smaller sample (fewer observations with X spread the same way, so a smaller SST_x)  -> check
+# - A larger true slope beta1                                                              -> leave blank
+# - A larger error variance sigma^2                                                        -> check
+# - X values bunched more tightly together (a smaller SST_x)                               -> check
+# - A larger sample (more observations with X spread the same way, so a larger SST_x)      -> leave blank
+#
+# ANSWER (if it says SMALLER instead):
+# - A larger sample (more observations with X spread the same way, so a larger SST_x)      -> check (only one)
+# - Everything else -> leave blank (smaller sample, larger sigma^2, and bunched X all make it larger;
+#   the true slope beta1 has no effect on the variance)
+
+# ------------------------------------------------------------------
+# A simple regression on n = 8 observations has sigma-hat = 6.8, and the sample standard deviation of X is S_x = 2.8. Find the standard error se(beta1-hat). (round to the hundredths)
+# Hint: SST_x = (n - 1) * S_x^2 (square the standard deviation), then se(beta1-hat) = sigma-hat / sqrt(SST_x).
+n         <- 8      # edit
+sigma_hat <- 6.8    # edit
+s_x       <- 2.8    # edit
+sst_x <- (n - 1) * s_x^2
+round(sigma_hat / sqrt(sst_x), 2)  # 0.92
+
+# ------------------------------------------------------------------
+# Under SLR1-SLR5, a regression has sd(beta1-hat) = 2.03. If the sample were 6 times as large, with the X values spread out in the same way (so SST_x is also 6 times as large), what would sd(beta1-hat) be? (round to the hundredths)
+# Hint: sd(beta1-hat) = sigma / sqrt(SST_x). Multiplying SST_x by k divides the sd by sqrt(k), not by k.
+sd_old <- 2.03      # edit
+k      <- 6         # edit
+round(sd_old / sqrt(k), 2)         # 0.83
+
+# ------------------------------------------------------------------
+# A multiple regression gives y-hat = -1 + 0.9 x1 + 2.3 x2. Find the predicted value y-hat at x1 = 5 and x2 = 20. (round to the hundredths)
+# Hint: plug both values in, exactly as in simple regression: y-hat = beta0-hat + beta1-hat x1 + beta2-hat x2.
+b0 <- -1            # edit
+b1 <- 0.9           # edit
+b2 <- 2.3           # edit
+x1 <- 5             # edit
+x2 <- 20            # edit
+round(b0 + b1 * x1 + b2 * x2, 2)   # 49.50
+
+# ------------------------------------------------------------------
+# A multiple regression gives y-hat = 6 + 2.9 x1 - 1.1 x2. If x1 rises by 4 and x2 rises by 2, by how much does y-hat change? (round to the hundredths)
+# Hint: change in y-hat = beta1-hat * change in x1 + beta2-hat * change in x2. Here beta2-hat is negative, and the intercept does not matter.
+b1  <- 2.9          # edit
+b2  <- -1.1         # edit
+dx1 <- 4            # edit
+dx2 <- 2            # edit
+round(b1 * dx1 + b2 * dx2, 2)      # 9.40
+
+# ------------------------------------------------------------------
+# Data: wage1 (wage = average hourly earnings in dollars; educ = years of education; exper = years of experience; tenure = years with the current employer). Run reg <- lm(wage ~ educ + exper + tenure, data = wage1). What is the predicted hourly wage of a worker with 14 years of education, 10 years of experience and 5 years of tenure? (round to the hundredths)
+# Hint: e.g. save the coefficients with b <- reg$coefficients, then do something like b[1] + b[2]*14 + b[3]*10 + b[4]*5.
+data("wage1")
+reg <- lm(wage ~ educ + exper + tenure, data = wage1)
+b <- reg$coefficients
+educ_val   <- 14    # edit
+exper_val  <- 10    # edit
+tenure_val <- 5     # edit
+round(unname(b[1] + b[2] * educ_val + b[3] * exper_val + b[4] * tenure_val), 2)  # 6.58
+
+# ------------------------------------------------------------------
+# Data: wage1 (wage = average hourly earnings in dollars; educ = years of education; exper = years of experience; tenure = years with the current employer). Using the same regression of wage on educ, exper and tenure, by how much does the predicted hourly wage change when tenure rises by 3 years, holding education and experience fixed? (round to the hundredths)
+# Hint: change in wage-hat = beta3-hat * change in tenure when educ and exper do not change.
+delta_tenure <- 3   # edit
+round(unname(b[4] * delta_tenure), 2)  # 0.51
