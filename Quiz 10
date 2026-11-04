@@ -1,0 +1,126 @@
+# Quiz 10 cheat sheet (Problem Set 11)
+# Round every numeric answer to the hundredths place.
+# Where the question could be flipped (positive vs negative, true vs false, etc.), the opposite version is listed too.
+
+# ------------------------------------------------------------------
+# A regression gives log(y)-hat = 1.5 + 0.053 x1 - 0.014 x2. If x1 rises by 3 and x2 rises by 4, by about what percent does predicted y change? (Give a percent; it can be negative.) (round to the hundredths)
+# Hint: log-level MLR: %change y = 100 * (beta1 * change in x1 + beta2 * change in x2). Here beta2 is negative.
+b1  <- 0.053        # edit
+b2  <- -0.014       # edit
+dx1 <- 3            # edit (use a negative number if x falls)
+dx2 <- 4            # edit (use a negative number if x falls)
+round(100 * (b1 * dx1 + b2 * dx2), 2)   # 10.30
+# Opposite versions (just change the inputs above):
+#   both fall (dx1 = -3, dx2 = -4)   -> -10.30
+#   x1 rises 3, x2 falls 4           -> 21.50
+#   x1 falls 3, x2 rises 4           -> -21.50
+
+# ------------------------------------------------------------------
+# Data: wage1 (wage = average hourly earnings in dollars; educ = years of education; exper = years of experience; tenure = years with the current employer). Run reg <- lm(log(wage) ~ educ + exper + tenure, data = wage1). By about what percent does predicted wage change when experience rises by 2 years and tenure rises by 1 year, holding education fixed? (Give a percent. Use the unrounded coefficients.) (round to the hundredths)
+# Hint: %change wage = 100 * (beta_exper * 2 + beta_tenure * 1). With b <- reg$coefficients: 100 * (b[3]*2 + b[4]*1).
+library(wooldridge)
+data("wage1")
+reg <- lm(log(wage) ~ educ + exper + tenure, data = wage1)
+b <- reg$coefficients
+d_exper  <- 2       # edit (negative if it falls)
+d_tenure <- 1       # edit (negative if it falls)
+round(unname(100 * (b[3] * d_exper + b[4] * d_tenure)), 2)   # 3.03
+
+# ------------------------------------------------------------------
+# Data: wage1 (wage = average hourly earnings in dollars; educ = years of education; exper = years of experience; tenure = years with the current employer). Using the same regression of log(wage) on educ, exper and tenure, what is the predicted hourly wage, in dollars, of a worker with 12 years of education, 10 years of experience and 3 years of tenure? (round to the hundredths)
+# Hint: predict log(wage) first, then undo the log with exp(): exp(b[1] + b[2]*12 + b[3]*10 + b[4]*3).
+library(wooldridge)
+data("wage1")
+reg <- lm(log(wage) ~ educ + exper + tenure, data = wage1)
+b <- reg$coefficients
+educ_val   <- 12    # edit
+exper_val  <- 10    # edit
+tenure_val <- 3     # edit
+round(unname(exp(b[1] + b[2] * educ_val + b[3] * exper_val + b[4] * tenure_val)), 2)   # 4.46
+
+# ------------------------------------------------------------------
+# After an OLS multiple regression of Y on X1, ..., XK (with an intercept) and residuals U-hat_i = Y_i - Y-hat_i, which statements are always true? Select all that apply.
+# ANSWER (if it says ALWAYS TRUE):
+# - The sample covariance between each Xj and the residuals is 0.                          -> check
+# - The sample covariance between Y and the residuals is 0.                                -> leave blank
+# - The regression passes through the point of sample means.                               -> check
+# - The sample average of the residuals is 0.                                              -> check
+# - Every residual is 0 when the sample is large enough.                                   -> leave blank
+#
+# ANSWER (if it asks which are NOT always true / false):
+# - The sample covariance between Y and the residuals is 0.                                -> check (residuals are uncorrelated with the fitted values, not with Y)
+# - Every residual is 0 when the sample is large enough.                                   -> check
+# - Everything else -> leave blank
+
+# ------------------------------------------------------------------
+# A multiple regression gives y-hat = 6.3 + 0.3 x1 - 0.8 x2. The sample means of the independent variables are x1-bar = 12.4 and x2-bar = 4.5. What is the sample mean y-bar? (round to the hundredths)
+# Hint: the OLS regression passes through the point of means: y-bar = beta0 + beta1 * x1-bar + beta2 * x2-bar. Here beta2 is negative.
+b0    <- 6.3        # edit
+b1    <- 0.3        # edit
+b2    <- -0.8       # edit
+x1bar <- 12.4       # edit
+x2bar <- 4.5        # edit
+round(b0 + b1 * x1bar + b2 * x2bar, 2)   # 6.42
+# Opposite direction (given y-bar, solve for an intercept): b0 <- ybar - b1 * x1bar - b2 * x2bar
+
+# ------------------------------------------------------------------
+# Which of these regressions violate MLR3 (no perfect collinearity), so that OLS cannot estimate them? Select all that apply.
+# ANSWER (if it asks which VIOLATE):
+# - a regression with 5 independent variables, estimated on 4 observations                 -> check
+# - wage on educ and exper in a sample of 526 workers, where both vary                     -> leave blank
+# - wage on income in dollars and income in thousands of dollars                           -> check
+# - colGPA on ACT and hsGPA, which are positively (but not perfectly) correlated           -> leave blank
+# - voteA on expendA, expendB and totexpend, where totexpend = expendA + expendB           -> check
+#
+# ANSWER (if it asks which do NOT violate / can be estimated):
+# - wage on educ and exper (526 workers)                                                   -> check
+# - colGPA on ACT and hsGPA                                                                -> check
+# - Everything else -> leave blank
+
+# ------------------------------------------------------------------
+# Which situation makes MLR4, E[U | X1, ..., XK] = 0, fail (so that the X variables are endogenous)?
+# ANSWER (if it asks which FAILS): A variable that affects Y and is correlated with X1 is left out of the regression.
+# ANSWER (if it asks which does NOT make MLR4 fail): X1 and X2 are highly, but not perfectly, correlated; the sample has only 50 observations; Y is measured in thousands of dollars instead of dollars.
+# (Wrong functional form can also make MLR4 fail.)
+
+# ------------------------------------------------------------------
+# Formula (3.23): beta1-tilde = beta1-hat + beta2-hat * delta1-tilde. The simple regression of Y on X1 gives beta1-tilde = 1.17. The multiple regression of Y on X1 and X2 gives beta2-hat = -0.94, and the slope from regressing X2 on X1 is delta1-tilde = 0.47. Find the multiple-regression slope beta1-hat. (round to the hundredths)
+# Hint: solve (3.23) for beta1-hat: beta1-hat = beta1-tilde - beta2-hat * delta1-tilde. Watch the signs.
+b1_tilde <- 1.17    # edit
+b2_hat   <- -0.94   # edit
+d1_tilde <- 0.47    # edit
+round(b1_tilde - b2_hat * d1_tilde, 2)   # 1.61
+# Opposite direction (given beta1-hat, find the simple slope beta1-tilde):
+#   b1_hat <- 1.61; round(b1_hat + b2_hat * d1_tilde, 2)
+
+# ------------------------------------------------------------------
+# Data: bwght (bwght = a baby's birth weight in ounces; cigs = cigarettes the mother smoked per day during pregnancy; faminc = the family's income in thousands of dollars). Regress faminc (the variable left out of the simple regression in problem 12) on cigs, lm(faminc ~ cigs, data = bwght), to get delta1-tilde. Compute beta2-hat * delta1-tilde, the faminc coefficient from the multiple regression times this slope. (round to the hundredths)
+# Hint: by (3.23), beta2-hat * delta1-tilde = beta1-tilde - beta1-hat: the simple-regression cigs slope minus the multiple-regression one. Use that to check your answer.
+library(wooldridge)
+data("bwght")
+simple   <- lm(bwght ~ cigs, data = bwght)
+multiple <- lm(bwght ~ cigs + faminc, data = bwght)
+aux      <- lm(faminc ~ cigs, data = bwght)
+round(unname(coef(multiple)["faminc"] * coef(aux)["cigs"]), 2)        # -0.05
+round(unname(coef(simple)["cigs"] - coef(multiple)["cigs"]), 2)       # -0.05 (check)
+# For reference: simple cigs slope = -0.51, multiple cigs slope = -0.46
+
+# ------------------------------------------------------------------
+# An omitted variable X2 lowers Y (beta2 < 0), and X2 is negatively correlated with the included X1. The simple-regression slope on X1 is:
+# Hint: Table 3.2: Bias(beta1-tilde) = beta2 * delta1-tilde, and delta1-tilde has the sign of Cor(X1, X2).
+# ANSWER: biased upward   (negative x negative = positive bias)
+# Full table, in case he flips it:
+#   beta2 < 0, correlation negative -> biased UPWARD
+#   beta2 < 0, correlation positive -> biased DOWNWARD
+#   beta2 > 0, correlation negative -> biased DOWNWARD
+#   beta2 > 0, correlation positive -> biased UPWARD
+#   beta2 = 0 or correlation = 0    -> UNBIASED
+# (same signs = upward, different signs = downward)
+
+# ------------------------------------------------------------------
+# A researcher regresses crop yield on fertilizer use across farms, leaving out land quality. Better land raises yield, and farmers tend to use more fertilizer on better land. The simple-regression fertilizer slope most likely:
+# Hint: two legs: the sign of land quality's effect on yield (beta2) and the sign of its correlation with fertilizer (delta1-tilde).
+# ANSWER: overstates the effect of fertilizer (upward bias)   (beta2 > 0, correlation positive)
+# If he flips it:
+#   better land raises yield, but farmers use LESS fertilizer on better land -> understates the effect of fertilizer (downward bias)
+#   land quality has no effect on yield, or is uncorrelated with fertilizer  -> unbiased
