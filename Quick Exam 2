@@ -1,0 +1,317 @@
+##########################################################################
+##  EXAM 2 - QUICK ONE-LINERS   (use THIS first; Exam2.R is the backup)
+##  Each item: question wording -> type the numbers on the INPUT line -> run -> ONE answer.
+##  Ctrl+F plain words from the question. Round to the hundredths at the end.
+##  A FALL / DECREASE = negative number.   Coefficients by NAME: b["educ"]
+##  If library(wooldridge) errors: install.packages("wooldridge")
+##########################################################################
+options(scipen = 999)   # run once: no 1e-14 style numbers
+
+
+##########################################################################
+##  A. UNITS OF MEASUREMENT
+##########################################################################
+
+# Every value of y is MULTIPLIED by c (dollars to cents c = 100; thousands to dollars c = 1000). New OLS slope?
+b1 <- 1.66; m <- 100                     # INPUT
+b1 * m                                   # check: 166      (intercept also times m)
+
+# Every value of y is DIVIDED by k. New OLS slope?
+b1 <- 1.66; k <- 1000                    # INPUT
+b1 / k
+
+# Every value of x is DIVIDED by k (percent to decimal k = 100). New OLS slope?
+b1 <- 0.97; k <- 1000                    # INPUT
+b1 * k                                   # check: 970      (intercept unchanged)
+
+# Every value of x is MULTIPLIED by c. New OLS slope?
+b1 <- 0.34; m <- 10                      # INPUT
+b1 / m                                   # check: 0.034
+
+# log(y) regression, y measured in dollars instead of thousands (y times 1000). New INTERCEPT?
+b0 <- 4.2; m <- 1000                     # INPUT  (the SLOPE does not change)
+b0 + log(m)                              # check: 11.11
+
+# Data: ceosal1. lm(salary ~ sales). Salary in DOLLARS instead of thousands. New OLS slope?
+library(wooldridge)
+coef(lm(salary ~ sales, data = ceosal1))["sales"] * 1000      # check: 15.47
+
+
+##########################################################################
+##  B. LOG MODELS  (given numbers)
+##########################################################################
+
+# LOG-LEVEL: log(y) = b0 + b1*x. By about what percent does y change when x rises by dx?
+b1 <- 0.07; dx <- 3                      # INPUT (x FALLS by 3 -> dx <- -3)
+100 * b1 * dx                            # check: 21
+
+# LOG-LEVEL with TWO x's: log(y) = b0 + b1*x1 + b2*x2. x1 changes by dx1 and x2 by dx2. Percent change in y?
+b1 <- -0.051; dx1 <- 3                   # INPUT slope WITH its sign, change WITH its sign
+b2 <-  0.035; dx2 <- 2                   # INPUT
+100 * (b1 * dx1 + b2 * dx2)              # check: -8.3
+
+# LOG-LEVEL, x measured in MONTHS, asked about one more YEAR. Percent change?
+b1 <- 0.0032                             # INPUT slope per month
+100 * b1 * 12                            # check: 3.84
+
+# LOG-LOG: log(y) = b0 + b1*log(x). Percent change in y when x rises by pct% (ELASTICITY)?
+b1 <- 1.31; pct <- 5                     # INPUT (x FALLS 19% -> pct <- -19)
+b1 * pct                                 # check: 6.55
+
+# LEVEL-LOG: y = b0 + b1*log(x). How many UNITS does y change when x rises by pct%?
+b1 <- 33.9; pct <- 9                     # INPUT
+b1 / 100 * pct                           # check: 3.05
+
+
+##########################################################################
+##  C. LOG MODELS  (real data)
+##########################################################################
+
+# Data: ceosal1. lm(log(salary) ~ roe). Percent change in salary when roe rises by 4 points?
+library(wooldridge); b <- coef(lm(log(salary) ~ roe, data = ceosal1))
+100 * b["roe"] * 4                       # INPUT the 4      check: 5.55
+
+# Data: wage1. lm(log(wage) ~ exper). Percent change in wage with 10 more years of experience?
+library(wooldridge); b <- coef(lm(log(wage) ~ exper, data = wage1))
+100 * b["exper"] * 10                    # check: 4.36
+
+# Data: ceosal1. lm(salary ~ log(sales)) LEVEL-LOG. Thousand dollars change in salary when sales rise 10%?
+library(wooldridge); b <- coef(lm(salary ~ log(sales), data = ceosal1))
+b["log(sales)"] / 100 * 10               # check: 26.29
+
+# Data: bwght. lm(log(bwght) ~ log(faminc)) LOG-LOG. Percent change in birth weight when family income rises 15%?
+library(wooldridge); b <- coef(lm(log(bwght) ~ log(faminc), data = bwght))
+b["log(faminc)"] * 15                    # check: 0.31
+
+# Data: wage1. lm(log(wage) ~ educ + exper + tenure). Percent change when educ rises 1 and tenure rises 2?
+library(wooldridge); b <- coef(lm(log(wage) ~ educ + exper + tenure, data = wage1))
+100 * (b["educ"] * 1 + b["tenure"] * 2)  # INPUT change names/numbers   check: 13.62
+
+# Data: wage1. Same log(wage) regression. Predicted hourly wage IN DOLLARS at educ 16, exper 5, tenure 1?
+library(wooldridge); b <- coef(lm(log(wage) ~ educ + exper + tenure, data = wage1))
+exp(b["(Intercept)"] + b["educ"] * 16 + b["exper"] * 5 + b["tenure"] * 1)    # check: 6.05
+
+# Data: ceosal1. lm(log(salary) ~ log(sales) + roe). Percent change in salary when roe rises 10 (sales fixed)?
+library(wooldridge); b <- coef(lm(log(salary) ~ log(sales) + roe, data = ceosal1))
+100 * b["roe"] * 10                      # check: 17.87
+
+# Data: ceosal1. Same regression. Predicted salary (thousands) at sales 5000 and roe 15?
+library(wooldridge); b <- coef(lm(log(salary) ~ log(sales) + roe, data = ceosal1))
+exp(b["(Intercept)"] + b["log(sales)"] * log(5000) + b["roe"] * 15)          # check: 1067.66
+
+
+##########################################################################
+##  D. VARIANCE OF OLS / STANDARD ERRORS  (given numbers)
+##########################################################################
+
+# Var(b1hat) = sigma^2 / SST_X. Given sigma^2 and SST_X, find Var(b1hat).
+sigma2 <- 9; SSTx <- 40                  # INPUT
+sigma2 / SSTx
+
+# Given the error SD sigma and the x values, find sd(b1hat).
+sigma <- 2; x <- c(2, 5, 7, 9, 12)       # INPUT
+sigma / sqrt(sum((x - mean(x))^2))
+
+# Given n and the sample SD (or variance) of x, find SST_X.
+n <- 149; Sx <- 3.2                      # INPUT  (given the VARIANCE: Sx <- sqrt(variance))
+(n - 1) * Sx^2                           # check: 1515.52
+
+# Given sigma, n, and the sample variance of x, find sd(b1hat).
+sigma <- 3; n <- 26; Sx2 <- 4            # INPUT
+sigma / sqrt((n - 1) * Sx2)              # check: 0.3
+
+# SIMPLE regression: given n and SSR, find the estimate of the error variance sigma-hat^2.
+n <- 30; SSR <- 190                      # INPUT
+SSR / (n - 2)                            # (simple regression divides by n - 2)
+
+# SIMPLE regression: given n, SSR, and SST_X (or sd of x), find the standard error se(b1hat).
+n <- 30; SSR <- 190; SSTx <- 80          # INPUT  (given sd of x instead: SSTx <- (n - 1) * sd^2)
+sqrt(SSR / (n - 2)) / sqrt(SSTx)
+
+# The sample is k times as large (x spread the same way). New sd(b1hat)?
+sd_old <- 0.45; k <- 3                   # INPUT
+sd_old / sqrt(k)                         # check: 0.26
+
+# MULTIPLE regression with K x's on n observations has SSR. Find the standard error of the regression sigma-hat.
+n <- 48; K <- 3; SSR <- 1595             # INPUT  (K = number of x's, not counting the intercept)
+sqrt(SSR / (n - K - 1))                  # check: 6.02
+
+# Given sigma-hat, SST_j, and R_j^2, find se(bjhat).
+sigma_hat <- 6.2; SSTj <- 360; R2j <- 0.66   # INPUT
+sigma_hat / sqrt(SSTj * (1 - R2j))       # check: 0.56
+
+
+##########################################################################
+##  E. STANDARD ERROR BY HAND IN R  (PS12 #8-13)  - one line per piece
+##  EDIT the reg line and the variable names. Example: X_j = bdrms.
+##########################################################################
+library(wooldridge)
+reg <- lm(price ~ sqrft + bdrms + lotsize, data = hprice1)      # INPUT the regression from the question
+
+# How many degrees of freedom does the regression have, df = n - K - 1?
+df <- nrow(hprice1) - 3 - 1              # INPUT 3 = number of x's (K)
+df                                       # check: 84
+
+# Compute the standard error of the regression, sigma-hat = sqrt(SSR / df).
+SSR <- sum(reg$residuals^2)
+sigma_hat <- sqrt(SSR / df)
+sigma_hat                                # check: 59.83   (same as summary(reg)$sigma)
+
+# Compute SST_j for X_j, the total variation of X_j around its mean.
+SST_j <- sum((hprice1$bdrms - mean(hprice1$bdrms))^2)           # INPUT the X_j variable
+SST_j                                    # check: 61.59
+
+# Compute R_j^2: the R^2 from regressing X_j on the OTHER independent variables.
+R2_j <- summary(lm(bdrms ~ sqrft + lotsize, data = hprice1))$r.squared   # INPUT X_j ~ the other x's (NO y)
+R2_j                                     # check: 0.28
+
+# Put the pieces together: se(bjhat) = sigma-hat / sqrt(SST_j * (1 - R_j^2)).
+sigma_hat / sqrt(SST_j * (1 - R2_j))     # check: 9.01
+
+# The quick way: the standard error from summary(reg)$coefficients.
+summary(reg)$coefficients["bdrms", "Std. Error"]                # INPUT the name   check: 9.01
+
+# SIMPLE regression version. Data: ceosal1, reg <- lm(salary ~ roe). Standard error of the roe slope by hand.
+library(wooldridge); reg <- lm(salary ~ roe, data = ceosal1)
+sqrt(sum(reg$residuals^2) / (nrow(ceosal1) - 2)) / sqrt(sum((ceosal1$roe - mean(ceosal1$roe))^2))   # check: 11.12
+
+# Data: wage1, reg <- lm(wage ~ educ). Standard error of the regression sigma-hat?
+library(wooldridge); reg <- lm(wage ~ educ, data = wage1)
+sqrt(sum(reg$residuals^2) / (nrow(wage1) - 2))                  # check: 3.38
+
+# Data: wage1. SST_x for educ, the total sum of squares of the explanatory variable?
+library(wooldridge)
+sum((wage1$educ - mean(wage1$educ))^2)                          # check: 4025.43
+
+
+##########################################################################
+##  F. MULTIPLE REGRESSION
+##########################################################################
+
+# Given a fitted equation yhat = b0 + b1*x1 + b2*x2, find the predicted value at x1, x2.
+b0 <- 4; b1 <- 2.1; b2 <- -0.7           # INPUT
+b0 + b1 * 10 + b2 * 5                    # INPUT the x values
+
+# If x1 rises by dx1 and x2 rises by dx2, by how much does yhat change? (intercept drops out)
+b1 <- 2.1; dx1 <- 4                      # INPUT
+b2 <- -0.7; dx2 <- 2                     # INPUT
+b1 * dx1 + b2 * dx2
+
+# Data: wage1. reg <- lm(wage ~ educ + exper + tenure). Predicted hourly wage at educ 14, exper 10, tenure 5?
+library(wooldridge); b <- coef(lm(wage ~ educ + exper + tenure, data = wage1))
+b["(Intercept)"] + b["educ"] * 14 + b["exper"] * 10 + b["tenure"] * 5      # check: 6.58
+
+# Data: wage1. Same regression. Change in predicted wage when tenure rises by 3 (educ, exper fixed)?
+library(wooldridge); b <- coef(lm(wage ~ educ + exper + tenure, data = wage1))
+b["tenure"] * 3                          # INPUT the name and the change   check: 0.51
+
+# The sample means of the x's are given. What is the sample mean of y? (point of means)
+b0 <- 1.5; b1 <- 0.8; b2 <- -0.25        # INPUT
+b0 + b1 * 10 + b2 * 6                    # INPUT the means
+
+# Data: gpa1. reg <- lm(colGPA ~ ACT + hsGPA). Predicted colGPA at the means of ACT and hsGPA?
+library(wooldridge); b <- coef(lm(colGPA ~ ACT + hsGPA, data = gpa1))
+b["(Intercept)"] + b["ACT"] * mean(gpa1$ACT) + b["hsGPA"] * mean(gpa1$hsGPA)   # check: 3.06 (= mean(gpa1$colGPA))
+
+
+##########################################################################
+##  G. OMITTED-VARIABLE BIAS   (3.23)  simple = multiple + bhat2 * dtilde1
+##########################################################################
+
+# Given the simple slope btilde1, bhat2, and dtilde1, find the MULTIPLE-regression slope bhat1.
+btilde1 <- 1.31; bhat2 <- -0.35; dtilde1 <- 0.81    # INPUT
+btilde1 - bhat2 * dtilde1                # check: 1.59
+
+# Given bhat1, bhat2, and dtilde1, find the SIMPLE-regression slope btilde1.
+bhat1 <- -0.45; bhat2 <- 2.2; dtilde1 <- -0.3       # INPUT
+bhat1 + bhat2 * dtilde1
+
+# Given btilde1, bhat1, dtilde1, find bhat2.
+btilde1 <- 0.92; bhat1 <- 0.61; dtilde1 <- 0.4      # INPUT
+(btilde1 - bhat1) / dtilde1
+
+# Population: beta2 and delta1 given. What is the bias of the simple-regression slope? (negative = downward)
+beta2 <- -0.9; delta1 <- 1.25            # INPUT
+beta2 * delta1                           # check: -1.13
+
+# Data: hprice1. Compute bhat2 * dtilde1: sqrft coefficient from lm(price ~ bdrms + sqrft) times bdrms slope from lm(sqrft ~ bdrms).
+library(wooldridge)
+coef(lm(price ~ bdrms + sqrft, data = hprice1))["sqrft"] * coef(lm(sqrft ~ bdrms, data = hprice1))["bdrms"]   # check: 46.83
+#   pattern: coef(lm(Y ~ X1 + X2))["X2"] * coef(lm(X2 ~ X1))["X1"]
+#   wage1: ...lm(wage ~ educ + exper))["exper"] * coef(lm(exper ~ educ))["educ"] -> -0.10
+
+# Data: bwght. Slope on cigs in the simple regression lm(bwght ~ cigs)? / holding faminc fixed?
+library(wooldridge)
+coef(lm(bwght ~ cigs, data = bwght))["cigs"]                    # check: -0.51
+coef(lm(bwght ~ cigs + faminc, data = bwght))["cigs"]           # check: -0.46
+
+
+##########################################################################
+##  H. EXAM I REVIEW
+##########################################################################
+
+# E[X] and E[X^2] given. Find the standard deviation of aX + b.
+EX <- 2; EX2 <- 20; a <- 3               # INPUT (b never matters)
+abs(a) * sqrt(EX2 - EX^2)                # check: 12
+
+# Var(X), Var(Y), Cov(X,Y) given. Find Var(aX + bY).
+VarX <- 5; VarY <- 11; CovXY <- -4.5; a <- 2; b <- -3      # INPUT (minus sign goes on b)
+a^2 * VarX + b^2 * VarY + 2 * a * b * CovXY                 # check: 173
+
+# Joint distribution table (x, y, probability). Find Cor(X, Y).
+X <- c(3, 4, 6, 7); Y <- c(7, 1, 9, 3); p <- c(0.2, 0.3, 0.4, 0.1)   # INPUT the three columns
+(sum(X*Y*p) - sum(X*p)*sum(Y*p)) / sqrt((sum(X^2*p) - sum(X*p)^2) * (sum(Y^2*p) - sum(Y*p)^2))   # check: 0.35
+
+# Given X = x, Y takes values ... with probabilities .... Find E[aY + b | X = x].
+vals <- c(12, 27, 43); p <- c(0.5, 0.3, 0.2); a <- 2; b <- 3     # INPUT
+a * sum(vals * p) + b                    # check: 48.4
+
+# For the sample x, y regress y on x by OLS. Find the residual of the i-th observation.
+x <- c(1, 2, 5, 7, 8); y <- c(7, 5, 6, 11, 6)              # INPUT
+resid(lm(y ~ x))[3]                      # INPUT the observation number   check: -1.12
+
+# For the sample x, y: the OLS slope / intercept.
+coef(lm(y ~ x))
+
+# Residuals are given except one. What is the missing residual? (CHECK THE MINUS SIGNS)
+-sum(c(-2.2, 1.3, -2.1, 0.5, 1.9))       # check: 0.6
+
+# Compute sum of x_i * uhat_i  ->  ALWAYS 0.
+
+# Given SSE and R^2, find SSR.
+SSE <- 184; R2 <- 0.37                   # INPUT
+SSE / R2 - SSE                           # check: 313.3
+
+# Given SSR and R^2, find SSE.
+SSR <- 90; R2 <- 0.40                    # INPUT
+SSR / (1 - R2) - SSR
+
+# n observations, sample variance of y. Find SST.
+n <- 17; Sy2 <- 15                       # INPUT
+(n - 1) * Sy2                            # check: 240
+
+# Intercept, slope, and mean of x given. Find the sample mean of y.
+b0 <- 8; b1 <- 1.7; xbar <- 9            # INPUT
+b0 + b1 * xbar                           # check: 23.3
+
+# Data: wage1. reg <- lm(wage ~ tenure). OLS RESIDUAL of the worker in row 12 (residual, NOT fitted).
+library(wooldridge); reg <- lm(wage ~ tenure, data = wage1)
+reg$residuals[12]                        # INPUT row   check: 3.14     (fitted value would be reg$fitted.values[12])
+
+# Data: wage1. reg <- lm(wage ~ tenure). Percentage of the sample variation in wage explained by tenure?
+library(wooldridge)
+100 * summary(lm(wage ~ tenure, data = wage1))$r.squared        # check: 12.03
+
+# Data: bwght. lm(bwght ~ faminc). Explained sum of squares SSE?
+library(wooldridge); reg <- lm(bwght ~ faminc, data = bwght)
+sum((bwght$bwght - mean(bwght$bwght))^2) - sum(reg$residuals^2)  # check: 6819.05
+
+# Data: wage1. Mean wage within a group (e.g. women, female == 1).
+library(wooldridge)
+mean(wage1$wage[wage1$female == 1])
+
+# Data: ceosal1. Number of CEOs / sample mean of roe / correlation of salary and roe.
+library(wooldridge)
+nrow(ceosal1); mean(ceosal1$roe); cor(ceosal1$salary, ceosal1$roe)
+
+## END
