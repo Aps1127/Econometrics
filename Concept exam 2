@@ -1,0 +1,522 @@
+##########################################################################
+##  EXAM 2 - EVERY NON-CALCULATION QUESTION (exact wording, all options)
+##  From Problem Sets 8-12, Quizzes 8-10, and Exam I.
+##  Ctrl+F a few plain words from the exam question. The ANSWER is under each one.
+##  FLIP = the answer if he asks the opposite version (larger/smaller, up/down ...).
+##  Math is written in plain text: B1hat = beta-1-hat, btilde1 = beta-1-tilde, dtilde1 = delta-1-tilde,
+##  sigma^2 = error variance, SST_X = total sum of squares of X, R_j^2 = R-squared of X_j on the other x's.
+##
+##  SECTIONS:  1 UNITS AND LOGS | 2 UNBIASEDNESS | 3 LARGER OR SMALLER (variance / se)
+##             4 SLR / MLR ASSUMPTIONS | 5 MULTIPLE REGRESSION + OLS PROPERTIES
+##             6 OMITTED-VARIABLE BIAS | 7 STANDARD ERRORS (PS12) | 8 EXAM I CONCEPTS
+##########################################################################
+
+
+##########################################################################
+##  1. UNITS AND LOGS
+##########################################################################
+
+# [Quiz 8 #1] A regression gives log(salary)hat = B0hat + B1hat log(sales), with sales in millions of dollars.
+# Sales are then measured in thousands of dollars instead (every value of sales is multiplied by 1000). What happens?
+#   - B1hat is multiplied by 1000.
+#   - Neither B0hat nor B1hat changes.
+#   - B1hat is divided by 1000.
+#   - B1hat does not change; only B0hat changes.
+#   ANSWER: B1hat does not change; only B0hat changes.
+#   (rule: rescaling anything INSIDE log() never changes a slope, only the intercept)
+
+# [PS9 #1] A log-log regression of CEO salary on firm sales gives log(salary)hat = B0hat + B1hat log(sales),
+# with salary in thousands of dollars. Salary is then measured in dollars instead. What happens?
+#   - B1hat is multiplied by 1000.
+#   - B1hat is divided by 1000.
+#   - B1hat does not change; only B0hat changes.
+#   - Neither B0hat nor B1hat changes.
+#   ANSWER: B1hat does not change; only B0hat changes.   (new B0hat = B0hat + log(1000))
+
+# [PS8 #15] In a regression of y on x, every value of x is multiplied by 10. Which statement is correct?
+#   - The slope is divided by 10, the intercept does not change, and R^2 does not change.
+#   - The slope is multiplied by 10, and the intercept does not change.
+#   - R^2 is divided by 10.
+#   - The slope and the intercept are both divided by 10.
+#   ANSWER: The slope is divided by 10, the intercept does not change, and R^2 does not change.
+#   FLIP (x DIVIDED by 10): slope MULTIPLIED by 10, intercept unchanged, R^2 unchanged.
+#   FLIP (y multiplied by 10): slope AND intercept both multiplied by 10, R^2 unchanged.
+
+# [PS9 #4] In which model is the slope read as %delta y = 100 * B1 * delta x?
+#   - log-log:     log(y) = B0 + B1 log(x) + u
+#   - log-level:   log(y) = B0 + B1 x + u
+#   - level-log:   y = B0 + B1 log(x) + u
+#   - level-level: y = B0 + B1 x + u
+#   ANSWER: log-level.
+#   FLIP: "%delta y = B1 * %delta x" (elasticity) -> log-log.
+#         "delta y = (B1/100) * %delta x" -> level-log.
+#         "delta y = B1 * delta x" -> level-level.
+
+# [PS8 #20] A study estimates log(rent)hat = 2.1 + 0.45 log(income). What does the 0.45 mean?
+#   - A 1% rise in income is associated with about a 45% rise in rent.
+#   - A 1% rise in income is associated with about a 0.45% rise in rent.
+#   - A $1 rise in income is associated with about a 45% rise in rent.
+#   - A $1 rise in income is associated with a $0.45 rise in rent.
+#   ANSWER: A 1% rise in income is associated with about a 0.45% rise in rent.   (log-log = elasticity)
+
+# [Quiz 9 #1] A regression gives saleshat = 50 + 20 log(advertising). What does the 20 mean?
+#   - A $1 rise in advertising is associated with a rise of 20 units in predicted sales.
+#   - A 1% rise in advertising is associated with a rise of about 0.20 units in predicted sales.
+#   - A 1% rise in advertising is associated with a rise of about 20% in predicted sales.
+#   - A 1% rise in advertising is associated with a rise of 20 units in predicted sales.
+#   ANSWER: A 1% rise in advertising is associated with a rise of about 0.20 units in predicted sales.   (level-log: B1/100)
+
+# [PS10 #1] A regression gives test scorehat = 12 + 8 log(income). What does the 8 mean?
+#   - A 1% rise in income is associated with a rise of about 0.08 points in the predicted test score.
+#   - A 1% rise in income is associated with a rise of about 8% in the predicted test score.
+#   - A 1% rise in income is associated with a rise of 8 points in the predicted test score.
+#   - A $1 rise in income is associated with a rise of 8 points in the predicted test score.
+#   ANSWER: A 1% rise in income is associated with a rise of about 0.08 points in the predicted test score.
+
+# (pattern) log-level log(y) = b0 + 0.03x: what does 0.03 mean?  ANSWER: +1 x -> about 3% rise in y (100 * B1 %).
+# (pattern) level-level: +1 x -> y changes by B1 units.
+# (pattern) Turn a predicted log(y) back into y:  exp().
+
+
+##########################################################################
+##  2. UNBIASEDNESS
+##########################################################################
+
+# [PS9 #8] Theorem 2.1 says that under SLR1-SLR4, E[B1hat] = B1. What does this mean?
+#   - Averaged over many random samples, B1hat equals B1.
+#   - The OLS residuals are all equal to zero.
+#   - B1hat equals B1 only when R^2 = 1.
+#   - Every sample gives B1hat = B1 exactly.
+#   ANSWER: Averaged over many random samples, B1hat equals B1.
+
+# [Quiz 9 #4] Each of 1,000 researchers draws their own random sample from the same population and estimates B1 by OLS.
+# SLR1-SLR4 hold. Which statement is correct?
+#   - Most researchers overestimate B1.
+#   - The estimates cannot differ from one researcher to the next.
+#   - All 1,000 researchers get exactly B1.
+#   - The researchers get different estimates, but their average is close to B1.
+#   ANSWER: The researchers get different estimates, but their average is close to B1.
+
+# [PS10 #4] Suppose you could draw 1,000 different random samples from the same population and compute B1hat in each one.
+# If OLS is unbiased (SLR1-SLR4 hold), which statement is correct?
+#   - All 1,000 estimates are positive.
+#   - The 1,000 estimates have no spread at all: Var(B1hat) = 0.
+#   - Every one of the 1,000 estimates equals B1.
+#   - The average of the 1,000 estimates is close to B1.
+#   ANSWER: The average of the 1,000 estimates is close to B1.
+
+# [PS10 #5] Why do we prefer an unbiased estimator with a smaller variance Var(B1hat)?
+#   - A smaller variance makes R^2 larger.
+#   - A smaller variance makes the residuals sum to zero.
+#   - A smaller variance is what makes an estimator unbiased.
+#   - Its estimates land closer to B1 from sample to sample, so any one estimate is more reliable.
+#   ANSWER: Its estimates land closer to B1 from sample to sample, so any one estimate is more reliable.
+
+# (Mock #1) Under MLR1-MLR4, OLS is unbiased. This means:
+#   ANSWER: Averaged over many random samples, B1hat equals B1.   (NOT: every sample exact / no variance / residuals zero)
+
+# (Study guide) Population quantity vs sample statistic:
+#   ANSWER: mu_Y and B1 are FIXED numbers (population). Ybar and B1hat are RANDOM VARIABLES (change sample to sample).
+
+
+##########################################################################
+##  3. LARGER OR SMALLER  (Var(B1hat), sd, standard errors)
+##  Var(B1hat) = sigma^2 / SST_X (simple)     Var(Bjhat) = sigma^2 / (SST_j (1 - R_j^2)) (multiple)
+##
+##   makes Var / sd / se LARGER          |  makes Var / sd / se SMALLER
+##   ------------------------------------|-------------------------------------
+##   larger error variance sigma^2       |  smaller error variance sigma^2
+##   SMALLER sample                      |  LARGER sample
+##   X bunched together (smaller SST_X)  |  X more spread out (larger SST_X)
+##   LARGER R_j^2 (X_j highly correlated |  smaller R_j^2 (X_j less related to
+##     with the other x's)               |     the other x's)
+##   NEVER MATTERS: size of the true slope B1 / Bj, the intercept B0
+##########################################################################
+
+# [Quiz 8 #8] Holding everything else fixed, which change makes Var(B1hat) larger?
+#   - A larger sample.
+#   - A larger error variance sigma^2.
+#   - More spread-out values of X (a larger SST_X).
+#   - A larger slope B1.
+#   ANSWER: A larger error variance sigma^2.
+#   FLIP (smaller): A larger sample / More spread-out values of X.
+
+# [PS9 #13] Holding everything else fixed, which change makes Var(B1hat) smaller?
+#   - A larger intercept B0.
+#   - A larger error variance sigma^2.
+#   - A smaller sample.
+#   - More spread-out values of X (a larger SST_X).
+#   ANSWER: More spread-out values of X (a larger SST_X).
+#   FLIP (larger): A larger error variance sigma^2 / A smaller sample.
+
+# [Quiz 9 #5] Under SLR1-SLR5, and holding everything else fixed, which changes would make Var(B1hat) smaller? Select all that apply.
+#   - A smaller error variance sigma^2
+#   - More spread-out X values (a larger SST_X)
+#   - A larger error variance sigma^2
+#   - X values bunched more tightly together (a smaller SST_X)
+#   - A larger true slope B1
+#   ANSWER: A smaller error variance sigma^2  AND  More spread-out X values (a larger SST_X)
+#   FLIP (larger): A larger error variance sigma^2  AND  X values bunched more tightly together
+
+# [PS10 #6] Under SLR1-SLR5, Var(B1hat) = sigma^2 / SST_X. Holding everything else fixed, which changes would make Var(B1hat) larger? Select all that apply.
+#   - A smaller sample (fewer observations with X spread the same way, so a smaller SST_X)
+#   - A larger true slope B1
+#   - A larger error variance sigma^2
+#   - X values bunched more tightly together (a smaller SST_X)
+#   - A larger sample (more observations with X spread the same way, so a larger SST_X)
+#   ANSWER: A smaller sample  AND  A larger error variance sigma^2  AND  X values bunched more tightly together
+#   FLIP (smaller): A larger sample (and a smaller sigma^2, more spread-out X)
+
+# [MOCK EXAM #9] Holding everything else fixed, which make se(Bjhat) LARGER? Select all that apply.
+#   - A. A larger error variance sigma^2
+#   - B. A larger sample
+#   - C. X_j more highly correlated with the other x's (larger R_j^2)
+#   - D. A larger true Bj
+#   - E. Less variation in X_j (smaller SST_j)
+#   ANSWER: A, C, E      (B makes it SMALLER; D never matters)
+#   FLIP (SMALLER): a smaller sigma^2, a LARGER sample, X_j LESS correlated with the others (smaller R_j^2), MORE variation in X_j (larger SST_j)
+
+# [PS12 #7] Holding sigma-hat and SST_j fixed, what happens to se(Bjhat) as R_j^2 gets close to 1
+# (that is, as X_j becomes nearly a linear function of the other independent variables)?
+#   - It shrinks toward 0.
+#   - It does not change.
+#   - It approaches sigma-hat.
+#   - It grows without bound (multicollinearity).
+#   ANSWER: It grows without bound (multicollinearity).
+#   FLIP (R_j^2 = 0): se = sigma-hat / sqrt(SST_j), the simple-regression formula.
+
+# (pattern) Sample k times as large (X spread the same way): sd(B1hat) is DIVIDED by sqrt(k) (not by k). Var divided by k.
+# (pattern) sigma doubles: sd(B1hat) doubles, Var times 4.
+
+# [PS11 #10] Unbiasedness only needs MLR1-MLR4. Why not simply add every variable we can find to the regression?
+#   - Adding any variable always makes the other estimates biased.
+#   - R cannot estimate a regression with more than three independent variables.
+#   - Adding variables can increase the variance of the OLS estimates and can even violate MLR3.
+#   - Adding a variable always lowers R^2.
+#   ANSWER: Adding variables can increase the variance of the OLS estimates and can even violate MLR3.
+
+
+##########################################################################
+##  4. SLR / MLR ASSUMPTIONS
+##  MLR1 linear in parameters | MLR2 random sampling | MLR3 no perfect collinearity
+##  MLR4 zero conditional mean E[U|X] = 0 (fails -> endogenous, BIASED) | MLR5 homoskedasticity
+##########################################################################
+
+# [PS8 #1] In test score = B0 + B1 class size + U, family income is part of U. Richer school districts tend to have smaller classes.
+# Which statement is correct?
+#   - The zero conditional mean assumption E[U | class size] = 0 holds, because family income is not in the model.
+#   - B1 must equal zero.
+#   - U is always equal to zero.
+#   - The zero conditional mean assumption fails, because the average of U changes with class size.
+#   ANSWER: The zero conditional mean assumption fails, because the average of U changes with class size.
+
+# [Exam I #5] In yield = B0 + B1 fertilizer + U, land quality is part of U. Suppose farmers put more fertilizer on better-quality land. Then:
+#   - the zero conditional mean assumption fails, because the average of U changes with fertilizer
+#   - U is always equal to zero
+#   - B1 must equal zero
+#   - the zero conditional mean assumption E[U | fertilizer] = 0 still holds
+#   ANSWER: the zero conditional mean assumption fails, because the average of U changes with fertilizer
+
+# [Quiz 10 #7] In wage = B0 + B1 educ + U, ability is part of the error U. Ability raises wages and is positively correlated with education.
+# Which assumption fails?
+#   - MLR2 (random sampling)
+#   - MLR4 (E[U | educ] = 0), so educ is endogenous
+#   - MLR3 (no perfect collinearity)
+#   - MLR1 (the population model can be written as Y = B0 + B1 X1 + ... + BK XK + U)
+#   ANSWER: MLR4 (E[U | educ] = 0), so educ is endogenous
+
+# [PS11 #9] Which situation makes MLR4, E[U | X1, ..., XK] = 0, fail (so that the X variables are endogenous)?
+#   - X1 and X2 are highly, but not perfectly, correlated.
+#   - A variable that affects Y and is correlated with X1 is left out of the regression.
+#   - The sample has only 50 observations.
+#   - Y is measured in thousands of dollars instead of dollars.
+#   ANSWER: A variable that affects Y and is correlated with X1 is left out of the regression.   (or wrong functional form)
+
+# [PS9 #10] In a sample of workers, every worker has exactly 12 years of education. You regress wage on education. What goes wrong?
+#   - R^2 must equal 1.
+#   - SLR3 fails: the X values are all the same, so the OLS slope cannot be computed.
+#   - SLR4 fails, so the slope is biased.
+#   - Nothing: OLS works as usual.
+#   ANSWER: SLR3 fails: the X values are all the same, so the OLS slope cannot be computed.
+
+# [PS9 #17] In a regression of food spending on income, the spread of food spending around the regression line grows as income grows.
+# Which statement is correct?
+#   - SLR3 fails, so the OLS slope cannot be computed.
+#   - SLR4 fails, so the OLS slope is biased.
+#   - All five SLR assumptions still hold.
+#   - SLR5 (homoskedasticity) fails, so the variance formula of Theorem 2.2, Var(B1hat) = sigma^2/SST_X, no longer applies (OLS is still unbiased).
+#   ANSWER: SLR5 (homoskedasticity) fails, so the variance formula ... no longer applies (OLS is still unbiased).
+
+# [PS11 #7] Which of these regressions violate MLR3 (no perfect collinearity), so that OLS cannot estimate them? Select all that apply.
+#   - a regression with 5 independent variables, estimated on 4 observations            <- VIOLATES
+#   - wage on educ and exper in a sample of 526 workers, where both educ and exper vary from worker to worker
+#   - wage on income in dollars and income in thousands of dollars                       <- VIOLATES
+#   - colGPA on ACT and hsGPA, which are positively (but not perfectly) correlated
+#   - voteA on expendA, expendB and totexpend, where totexpend = expendA + expendB       <- VIOLATES
+#   ANSWER: 5 variables on 4 observations; income in dollars AND thousands; voteA with totexpend = expendA + expendB
+
+# [Quiz 10 #6] Which of these regressions violate MLR3 (no perfect collinearity), so that OLS cannot estimate them? Select all that apply.
+#   - profit on online sales, store sales and total sales, where total sales = online sales + store sales   <- VIOLATES
+#   - test score on study hours and sleep hours, which are negatively (but not perfectly) correlated
+#   - a regression with 3 independent variables, estimated on 3 observations                                <- VIOLATES
+#   - wage on educ alone
+#   - house price on size in square feet and size in square meters (computed from the square feet)          <- VIOLATES
+#   ANSWER: total sales = online + store; 3 variables on 3 observations; square feet AND square meters
+#   (also VIOLATES: exper = age - educ - 6 with all three; temperature in F and C; an x that never varies)
+#   (OK: x and x^2, x and log(x) - not LINEAR functions; any correlation that is not perfect)
+
+# [PS11 #8] Data: vote1. Create totexpend <- expendA + expendB, then run lm(voteA ~ expendA + expendB + totexpend).
+# What does R report for the coefficient on totexpend?
+#   - A very large number, because totexpend is highly correlated with expendA.
+#   - NA: R drops totexpend because it is an exact linear function of expendA and expendB.
+#   - Exactly 0, because totexpend adds no new information.
+#   - The sum of the expendA and expendB coefficients.
+#   ANSWER: NA: R drops totexpend because it is an exact linear function of expendA and expendB.
+
+# Gauss-Markov: under MLR1-MLR5, OLS is BLUE = Best Linear Unbiased Estimator.
+#   "Best" = SMALLEST VARIANCE among linear unbiased estimators.   (not "unbiased", not "highest R^2")
+
+
+##########################################################################
+##  5. MULTIPLE REGRESSION + OLS PROPERTIES
+##########################################################################
+
+# [PS10 #11] In wagehat = B0hat + B1hat educ + B2hat exper, what does B1hat measure?
+#   - The predicted change in education from a $1 higher wage.
+#   - The predicted change in wage from one more year of education, letting experience change too.
+#   - The predicted change in wage from one more year of education, holding experience fixed.
+#   - The predicted wage of a worker with one year of education.
+#   ANSWER: The predicted change in wage from one more year of education, holding experience fixed.
+
+# [PS11 #4] After an OLS multiple regression of Y on X1, ..., XK (with an intercept) and residuals Uhat_i = Y_i - Yhat_i,
+# which statements are always true? Select all that apply.
+#   - The sample covariance between each X_j and the residuals is 0.                          <- TRUE
+#   - The sample covariance between Y and the residuals is 0.                                 (false)
+#   - The regression passes through the point of sample means: Ybar = B0hat + B1hat X1bar + ... + BKhat XKbar.   <- TRUE
+#   - The sample average of the residuals is 0.                                               <- TRUE
+#   - Every residual is 0 when the sample is large enough.                                    (false)
+#   ANSWER: covariance of each X_j with residuals is 0; passes through the point of means; average residual is 0
+
+# [Quiz 10 #4] After an OLS multiple regression of Y on X1, ..., XK (with an intercept) and residuals Uhat_i = Y_i - Yhat_i,
+# which statements are always true? Select all that apply.
+#   - The regression passes through the point of sample means: Ybar = B0hat + B1hat X1bar + ... + BKhat XKbar.   <- TRUE
+#   - The sample covariance between each X_j and the residuals is 0.                          <- TRUE
+#   - The residuals add up to SSR.                                                            (false)
+#   - The sample covariance between Y and the residuals is 0.                                 (false)
+#   - The sample average of the residuals is 0.                                               <- TRUE
+#   ANSWER: point of means; covariance of each X_j with residuals is 0; average residual is 0
+#   (also TRUE if offered: covariance between the FITTED values Yhat and the residuals is 0; sum of x_i * uhat_i = 0)
+
+# [PS8 #2] A researcher fits four candidate lines to the same sample and records three sums for each. Exactly one is the OLS line. Which one?
+#   Line  sum(uhat)  sum|uhat|  sum(uhat^2)
+#    A      0.00       7.30       9.71
+#    B     -1.00       5.80       9.00
+#    C      0.00       6.40       8.13
+#    D      0.50       6.70       8.35
+#   ANSWER: Line C   (residuals sum to 0 AND the smallest sum of squared residuals among those)
+
+# [Exam I #11] Same idea: A 0.00/3.80/3.30, B 0.00/3.20/2.40, C -0.50/3.30/2.55, D 1.00/3.00/3.00
+#   ANSWER: Line B
+
+
+##########################################################################
+##  6. OMITTED-VARIABLE BIAS
+##  Bias(btilde1) = B2 * delta1.  Two legs: sign of B2 (does it raise Y?) x sign of corr(X1, X2)
+##   same signs -> UPWARD (overstates)     opposite signs -> DOWNWARD (understates / more negative)
+##########################################################################
+
+# [Quiz 10 #10] An omitted variable X2 raises Y (B2 > 0), and X2 is positively correlated with the included X1.
+# The simple-regression slope on X1 is:
+#   - impossible to sign without the data
+#   - unbiased
+#   - biased upward
+#   - biased downward
+#   ANSWER: biased upward
+
+# [PS10 #20] An omitted variable X2 lowers Y (B2 < 0), and X2 is positively correlated with X1. The simple-regression slope on X1 is:
+#   - biased downward
+#   - biased upward
+#   - impossible to sign without the data
+#   - unbiased
+#   ANSWER: biased downward
+
+# [PS11 #16] An omitted variable X2 lowers Y (B2 < 0), and X2 is negatively correlated with the included X1. The simple-regression slope on X1 is:
+#   - unbiased
+#   - biased upward
+#   - biased downward
+#   - impossible to sign without the data
+#   ANSWER: biased upward
+
+# (FLIP) X2 raises Y (B2 > 0) and is NEGATIVELY correlated with X1:  biased downward.
+
+# [Quiz 10 #11] A researcher regresses students' test scores on class size across school districts, leaving out family income.
+# Higher family income raises test scores, and richer districts tend to have smaller classes. The simple-regression slope on class size is most likely:
+#   - unbiased, because family income is not in the regression
+#   - unbiased, because class size and family income are different variables
+#   - biased upward (pushed above the true effect of class size)
+#   - biased downward (on average below, that is, more negative than, the true effect of class size)
+#   ANSWER: biased downward (on average below, that is, more negative than, the true effect of class size)   (+ x - = down)
+
+# [PS11 #17] A researcher regresses crop yield on fertilizer use across farms, leaving out land quality. Better land raises yield,
+# and farmers tend to use more fertilizer on better land. The simple-regression fertilizer slope most likely:
+#   - is unbiased, because land quality is not in the regression
+#   - is unbiased, because fertilizer and land quality are different variables
+#   - understates the effect of fertilizer (downward bias)
+#   - overstates the effect of fertilizer (upward bias)
+#   ANSWER: overstates the effect of fertilizer (upward bias)   (+ x + = up)
+
+# [PS11 #18] A school regresses exam scores on hours of tutoring, leaving out prior ability. Higher ability raises exam scores,
+# but the students who sign up for the most tutoring tend to be the ones with lower prior ability. The simple-regression tutoring slope most likely:
+#   - is unbiased, because tutoring and ability are negatively correlated
+#   - understates the effect of tutoring (downward bias)
+#   - is unbiased, because ability raises scores
+#   - overstates the effect of tutoring (upward bias)
+#   ANSWER: understates the effect of tutoring (downward bias)   (+ x - = down)
+
+# (Mock #5) GPA on hours worked at a part-time job, leaving out family income. Higher income raises GPA,
+# and students from richer families work fewer hours.   ANSWER: biased downward   (+ x - = down)
+
+# (more stories)  wage ~ educ, omit ability: + x + = UPWARD
+#   price ~ bdrms (or bathrooms), omit sqft: + x + = UPWARD
+#   bwght ~ cigs, omit faminc: income raises bwght (+), smokers poorer (-) = DOWNWARD
+#   used-car price ~ age, omit mileage: mileage lowers price (-), older = more miles (+) = DOWNWARD
+#   crime ~ police, omit poverty: + x + = UPWARD     test score ~ sleep, omit stress: - x - = UPWARD
+#   crop yield ~ irrigation, omit rainfall: + x - = DOWNWARD     sales ~ advertising, omit unrelated weather: NO BIAS
+
+# [PS11 #19] You regress Y on X1 alone, leaving out X2. When does this cause no omitted-variable bias in the slope on X1? Select all that apply.
+#   - X2 has no ceteris-paribus effect on Y (B2 = 0).                <- YES
+#   - The regression has a high R^2.
+#   - The sample is very large.
+#   - X2 is uncorrelated with X1 in the sample (dtilde1 = 0).         <- YES
+#   - X2 has a large effect on Y and is strongly correlated with X1.
+#   ANSWER: B2 = 0  AND  X2 uncorrelated with X1
+
+# [PS9 #9] In wage = B0 + B1 educ + U, which of the following is the most likely to contribute omitted-variable bias to the OLS slope on educ?
+#   - The worker's ability, which raises wages and tends to be higher for people with more education.
+#   - A random number the researcher assigned to each worker.
+#   - The worker's survey ID number.
+#   - The day of the week on which the worker was surveyed.
+#   ANSWER: The worker's ability, which raises wages and tends to be higher for people with more education.
+
+# [Quiz 8 #7] In test score = B0 + B1 class size + U, which of the following is the most likely to contribute omitted-variable bias to the OLS slope on class size?
+#   - Students' family income, which raises test scores and is related to class size (richer districts have smaller classes).
+#   - The color of the classroom walls.
+#   - The weather on the day of the test, which affects scores but is unrelated to class size.
+#   - A random ID number the researcher assigned to each school.
+#   ANSWER: Students' family income, which raises test scores and is related to class size.
+#   (rule: needs BOTH legs - affects Y AND related to X. Weather fails leg 2.)
+
+# [PS11 #15] In the birth-weight regressions, the simple-regression cigs slope is about -0.51 and the multiple-regression slope
+# (holding faminc fixed) is about -0.46. Which reading is correct?
+#   - About -0.46 per cigarette is the estimated effect of smoking holding income fixed; the other -0.05 is income's effect riding along,
+#     because heavier smokers tend to have lower incomes.
+#   - The two slopes differ only because of rounding; omitting faminc changes nothing.
+#   - About -0.05 per cigarette is the effect of smoking; the other -0.46 comes from family income.
+#   - Adding faminc makes the cigs slope biased, so the simple regression is the better estimate.
+#   ANSWER: About -0.46 per cigarette is the estimated effect of smoking holding income fixed; the other -0.05 is income's effect riding along.
+
+# (pattern) From numbers: simple slope ABOVE the multiple slope -> biased UPWARD; BELOW -> DOWNWARD.
+# (Day 15) math10 on lnchprg has a negative slope: does free lunch lower scores?  ANSWER: No - poverty (a confounder) drives both.
+
+
+##########################################################################
+##  7. STANDARD ERRORS  (Problem Set 12)
+##########################################################################
+
+# [PS12 #1] In the formula se(Bjhat) = sigma-hat / sqrt(SST_j (1 - R_j^2)), what is X_j?
+#   - The dependent variable Y.
+#   - The residuals from the regression.
+#   - The independent variable whose coefficient Bjhat we want the standard error of.
+#   - Whichever independent variable has the largest coefficient.
+#   ANSWER: The independent variable whose coefficient Bjhat we want the standard error of.
+
+# [PS12 #2] In wage = B0 + B1 educ + B2 exper + B3 tenure + U, you want se(B2hat), the standard error of the exper coefficient. Which regression gives R_j^2?
+#   - The regression of wage on exper alone: lm(wage ~ exper)
+#   - The regression of wage on educ, exper and tenure (its own R^2)
+#   - The regression of exper on wage: lm(exper ~ wage)
+#   - The regression of exper on educ and tenure: lm(exper ~ educ + tenure)
+#   ANSWER: The regression of exper on educ and tenure: lm(exper ~ educ + tenure)
+#   (rule: X_j on the OTHER x's. Y is NOT involved.  educ -> lm(educ ~ exper + tenure);  tenure -> lm(tenure ~ educ + exper))
+
+# [PS12 #3] The standard error of the regression is sigma-hat = sqrt(SSR / (n - K - 1)). What does sigma-hat estimate?
+#   - sigma, the standard deviation of the error U
+#   - The R^2 of the regression
+#   - The standard deviation of Bjhat
+#   - The standard deviation of Y
+#   ANSWER: sigma, the standard deviation of the error U
+
+# [PS12 #14] Print summary(reg). Near the bottom is a line "Residual standard error: ... on 84 degrees of freedom". Which of your answers does it match?
+#   - Problem 9 (sigma-hat), and its degrees of freedom match problem 8
+#   - Problem 10 (SST_j)
+#   - Problem 12 (the standard error of the bdrms coefficient)
+#   - None of them
+#   ANSWER: Problem 9 (sigma-hat), and its degrees of freedom match problem 8   (Residual standard error = sigma-hat, df = n - K - 1)
+
+# [PS12 #15] A warning about missing data. Some datasets have missing values (NA). lm() silently drops every row with an NA in any variable
+# of the regression. Suppose Y (or another independent variable) has missing values but X_j does not, and you compute SST_j by hand from
+# all the rows of X_j. What happens?
+#   - Nothing: missing values never change any statistic.
+#   - Your hand-computed standard error can differ from summary(reg), because SST_j uses rows the regression dropped.
+#     Compute every piece on the same rows the regression used.
+#   - Only R^2 is affected, never the standard errors.
+#   - R stops with an error, so you notice right away.
+#   ANSWER: Your hand-computed standard error can differ from summary(reg), because SST_j uses rows the regression dropped.
+
+# [PS12 #13] In summary(reg)$coefficients, which row is bdrms in price ~ sqrft + bdrms + lotsize?
+#   ANSWER: row 3 (the intercept is row 1). Std. Error is column 2:  summary(reg)$coefficients[3, 2]  or  ["bdrms", "Std. Error"]
+
+# (pattern) df = n - K - 1, K = number of independent variables NOT counting the intercept. Simple regression: n - 2.
+
+
+##########################################################################
+##  8. EXAM I CONCEPTS (cumulative)
+##########################################################################
+
+# [Exam I #1] The closing price of one company's stock, recorded every trading day from 2015 to 2024, is an example of:
+#   - panel data | cross-sectional data | a population | time-series data
+#   ANSWER: time-series data   (many units one time = cross-section; many units over time = panel)
+
+# [Exam I #2] Across U.S. cities, the number of police officers is positively correlated with the number of crimes. Which statement is best?
+#   - Because the correlation is positive, adding police to a city would increase its crime, holding all else equal.
+#   - Hiring police causes crime.
+#   - The correlation alone cannot tell us that police cause crime. For example, larger cities have more of both.
+#   - The correlation must be close to 1.
+#   ANSWER: The correlation alone cannot tell us that police cause crime. For example, larger cities have more of both.
+
+# [Exam I #3] The unemployment rate falls from 5% to 4%. Select all statements that are correct.
+#   - It fell by 1%. | It fell by 25%. | It fell by 20%. | It fell by 1 percentage point. | It fell by 20 percentage points.
+#   ANSWER: It fell by 20%.  AND  It fell by 1 percentage point.     (percent = 100*(4-5)/5 = -20%; points = 4 - 5 = -1)
+
+# [Exam I #4] Match each part of Y = B0 + B1 X + U to its name (one name is not used):
+#   ANSWER: Y = dependent variable; X = independent variable; U = error term; B1 = slope parameter; B0 = intercept parameter;
+#           unused: fitted value
+
+# [Exam I #6] Observation i has fitted value Yhat_i = 12 and residual Uhat_i = -3. Which statement is correct?
+#   ANSWER: Y_i = 9, and OLS over-predicted it.   (Y = fitted + residual; negative residual = OVER-predicted)
+#   FLIP (residual +3): Y_i = 15, and OLS under-predicted it.
+
+# [Exam I #7] Population of new cars sold in the U.S. Which is larger: E[price | make = Toyota] or E[price | make = Rolls-Royce]?
+#   ANSWER: E[price | make = Rolls-Royce]   (a conditional expectation DOES depend on the group)
+
+# [Exam I #8] Population of U.S. residents. Which is larger: Var(annual income | age = 10) or Var(annual income | age = 40)?
+#   - Var(annual income | age = 10) | Var(annual income | age = 40) | Neither: a conditional variance does not depend on the group.
+#   - Neither: both equal the overall variance of annual income.
+#   ANSWER: Var(annual income | age = 40)   (10-year-olds nearly all earn ~0; 40-year-olds vary a lot)
+
+# [Exam I #9] In a sample where the y values are not all equal, every observation lies exactly on the OLS line. Then:
+#   - R^2 = 0 | SST = SSR | SSR = 0 and R^2 = 1 | SST = 0
+#   ANSWER: SSR = 0 and R^2 = 1      FLIP (line explains nothing): SSE = 0, R^2 = 0, SST = SSR
+
+# [Exam I #10] A regression of house price on square footage has R^2 = 0.62. Which statement is correct?
+#   - 62% of the sample variation in house price is explained by square footage.
+#   - Square footage causes 62% of a house's price.
+#   - One more square foot raises the predicted price by 0.62.
+#   - 62% of the houses lie exactly on the regression line.
+#   ANSWER: 62% of the sample variation in house price is explained by square footage.
+
+# [Exam I #12] Sample covariance of income (dollars) and education is 2,200, correlation 0.14. Income measured in thousands instead.
+# What is the sample correlation?   ANSWER: 0.14  (correlation never changes with units; covariance would become 2.2)
+
+# (Study guide) Var(X + b) = Var(X).  Var(aX + b) = a^2 Var(X).  sd(aX + b) = |a| sd(X).  E[aX + b] = a E[X] + b.
+
+## END
