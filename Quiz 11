@@ -1,0 +1,177 @@
+# ==============================================================
+# ECN 377 - Quiz 11 (Wed 11/18) cheat sheet - from Problem Set 13
+# PART 1: the 7 quiz questions (#1, #3, #4, #7, #14, #17, #20)
+# PART 2: extras from the longer list (#6, #8, #9, #16)
+# Change the INPUT lines to his new numbers, then rerun the block.
+# Round every numeric answer to the hundredths.
+# ==============================================================
+
+
+######################################################################
+##########   PART 1 - THE 7 QUIZ QUESTIONS   ##########
+######################################################################
+
+
+# --------------------------------------------------------------
+# Under MLR1-MLR6, (bhat_j - b_j)/sd(bhat_j) has a N(0,1) distribution,
+# but (bhat_j - b_j)/se(bhat_j) has a t distribution. Why?
+# --------------------------------------------------------------
+# ANSWER: The standard error replaces the unknown sigma with the
+#         estimate sigma-hat, which varies from sample to sample.
+# OPPOSITE ("why is the sd version N(0,1)?"): sd uses the true sigma,
+#         a fixed constant, so the ratio is just a standardized normal.
+# Wrong choices: "se always larger than sd" / "bhat not normal with se" /
+#         "t applies only when sample is small"
+
+
+# --------------------------------------------------------------
+# A multiple regression with K = 5 independent variables is estimated
+# on n = 189 observations. How many degrees of freedom does the
+# t-statistic for bhat_j have?
+# --------------------------------------------------------------
+n <- 189     # INPUT
+K <- 5       # INPUT  (number of slopes, NOT counting intercept)
+df <- n - K - 1
+df           # 183
+# Flip (given df and n, find K):  K = n - df - 1
+
+
+# --------------------------------------------------------------
+# An estimate is bhat_j = 2.27 with se(bhat_j) = 0.69.
+# Find the t-statistic for H0: b_j = 0.
+# --------------------------------------------------------------
+bhat <- 2.27   # INPUT
+se   <- 0.69   # INPUT
+b0   <- 0      # INPUT  (null value; usually 0)
+t <- (bhat - b0) / se
+round(t, 2)    # 3.29   (t has the same sign as bhat)
+# Flip (given t and se, find bhat):  bhat = t * se
+# Flip (given t and bhat, find se):  se = bhat / t
+
+
+# --------------------------------------------------------------
+# You test H0: b_j = 0 against H1: b_j > 0 at the 5% level with
+# df = 25, so c = 1.71. The t-statistic is t = 1.52. What do you conclude?
+# --------------------------------------------------------------
+alpha <- 0.05   # INPUT
+df    <- 25     # INPUT
+t     <- 1.52   # INPUT
+c <- qt(1 - alpha, df); round(c, 2)    # 1.71
+if (t > c) "Reject H0, because t > c" else "Fail to reject H0, because t < c"
+# ANSWER: Fail to reject H0, because t < c.
+# OPPOSITE (if t were bigger than c, e.g. 1.90): Reject H0, because t > c.
+# Traps: "Reject because t > 0" (wrong, need t > c);
+#        "Reject because t < c" (wrong)
+
+
+# --------------------------------------------------------------
+# Data: bwght. Run reg <- lm(bwght ~ cigs + faminc, data = bwght).
+# You want to test H0: b_cigs = 0 against H1: b_cigs < 0 at the 1% level.
+# Find the t-statistic for cigs.
+# --------------------------------------------------------------
+library(wooldridge)
+reg <- lm(bwght ~ cigs + faminc, data = bwght)   # INPUT (swap vars if he changes them)
+s <- summary(reg)$coefficients
+s
+round(s["cigs", 3], 2)     # -5.06   (column 3 = "t value")
+# by hand: s["cigs",1] / s["cigs",2]
+# Critical value for this test (problem 15) in case he asks:
+alpha <- 0.01                       # INPUT
+K <- 2                              # INPUT
+df <- nrow(bwght) - K - 1           # 1385
+round(qt(alpha, df), 2)             # -2.33   (left tail)
+
+
+# --------------------------------------------------------------
+# A regression of hours studied per week on financial-aid share,
+# measured in percent (40 means 40%), has slope 0.098. If the aid share
+# were measured as a decimal instead (0.40 means 40%), what would the slope be?
+# --------------------------------------------------------------
+slope <- 0.098   # INPUT
+# percent -> decimal: x divided by 100, so slope MULTIPLIED by 100
+round(slope * 100, 2)   # 9.8
+# OPPOSITE (decimal -> percent): x multiplied by 100, so slope DIVIDED by 100
+round(slope / 100, 4)
+# General rule: if x is multiplied by a, slope is divided by a.
+#               if y is multiplied by a, slope is multiplied by a.
+
+
+# --------------------------------------------------------------
+# Data: hprice1. Run reg <- lm(log(price) ~ log(sqrft) + bdrms, data = hprice1).
+# What is the predicted price of a 2,000-square-foot house with 3 bedrooms
+# (in thousands of dollars)?
+# --------------------------------------------------------------
+library(wooldridge)
+reg <- lm(log(price) ~ log(sqrft) + bdrms, data = hprice1)
+sqft_in  <- 2000   # INPUT
+bdrms_in <- 3      # INPUT
+pred_log <- predict(reg, newdata = data.frame(sqrft = sqft_in, bdrms = bdrms_in))
+round(exp(pred_log), 2)   # 279.89  (thousands of dollars)
+# by hand: b <- coef(reg); exp(b[1] + b[2]*log(sqft_in) + b[3]*bdrms_in)
+# If he asks for predicted LOG price instead: round(pred_log, 2)
+
+
+
+######################################################################
+######################################################################
+##########   PART 2 - EXTRA QUESTIONS (#6, #8, #9, #16)   ##########
+######################################################################
+######################################################################
+
+
+# --------------------------------------------------------------
+# For a test of H0: b_j = 0 against H1: b_j > 0 at the 5% level
+# with df = 12, find the critical value c.
+# --------------------------------------------------------------
+alpha <- 0.05   # INPUT
+df    <- 12     # INPUT
+c_right <- qt(1 - alpha, df)    # H1: b_j > 0  -> right tail, c positive
+round(c_right, 2)               # 1.78
+# OPPOSITE (H1: b_j < 0, left tail):
+round(qt(alpha, df), 2)         # -1.78
+# Two-sided (H1: b_j != 0):
+round(qt(1 - alpha/2, df), 2)   # 2.18  (reject if |t| > c)
+
+
+# --------------------------------------------------------------
+# For a test of H0: b_j = 0 against H1: b_j < 0 at the 5% level
+# with df = 37, find the critical value c.
+# --------------------------------------------------------------
+alpha <- 0.05   # INPUT
+df    <- 37     # INPUT
+c_left <- qt(alpha, df)          # H1: b_j < 0  -> left tail, c negative
+round(c_left, 2)                 # -1.69
+# OPPOSITE (H1: b_j > 0, right tail):
+round(qt(1 - alpha, df), 2)      # 1.69
+
+
+# --------------------------------------------------------------
+# You test H0: b_j = 0 against H1: b_j < 0 at the 5% level with df = 30,
+# so c = -1.70. Two researchers with different samples get t = -2.10
+# and t = -1.20. Which conclusions are correct?
+# --------------------------------------------------------------
+alpha <- 0.05            # INPUT
+df    <- 30              # INPUT
+t_vals <- c(-2.10, -1.20) # INPUT
+c <- qt(alpha, df); round(c, 2)    # -1.70
+ifelse(t_vals < c, "Reject H0", "Fail to reject H0")
+# ANSWER: Reject H0 when t = -2.10; fail to reject when t = -1.20.
+# OPPOSITE version (H1: b_j > 0, c = +1.70, t = 2.10 and 1.20):
+#         Reject when t = 2.10; fail to reject when t = 1.20.
+# Traps: "Reject in both cases because both negative" (wrong);
+#        "one-sided only rejects when t positive" (wrong)
+
+
+# --------------------------------------------------------------
+# Data: bwght. Using problems 14 and 15, what do you conclude at the 1% level?
+# --------------------------------------------------------------
+library(wooldridge)
+reg <- lm(bwght ~ cigs + faminc, data = bwght)
+t <- summary(reg)$coefficients["cigs", 3]; round(t, 2)   # -5.06
+c <- qt(0.01, nrow(bwght) - 2 - 1); round(c, 2)          # -2.33
+if (t < c) "Reject H0, because t < c" else "Fail to reject H0"
+# ANSWER: Reject H0, because t < c: more cigarettes per day are associated
+#         with a lower birth weight, holding family income fixed.
+# OPPOSITE (if t were not below c): Fail to reject H0, because t > c.
+# Traps: "fail to reject because coefficient (-0.46) is small" (size alone
+#        doesn't decide); "one-sided only rejects when t positive" (wrong)
